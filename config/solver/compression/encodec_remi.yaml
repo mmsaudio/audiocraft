@@ -9,22 +9,48 @@ defaults:
 sample_rate: 44100
 channels: 1
 
+rvq:
+  n_q: 8 #REMI
+  bins: 1024
+
+msstftd:
+  filters: 64
+  n_ffts: [2048, 1024, 512, 256, 128, 64]
+  hop_lengths: [512, 256, 128, 64, 32, 16]
+  win_lengths: [2048, 1024, 512, 256, 128, 64]
+
+msd:
+  filters: 32
+
+mpd:
+  periods: [2, 3, 5, 7, 11, 17]
+
 # loss balancing
 losses:
-  adv: 4.
-  feat: 4.
-  l1: 0.1
-  mel: 0.
-  msspec: 2.
+  adv: 2.
+  feat: 2.
+  l1: 0.05
+  mel: 1. #to test : 0.0
+  msspec: 1. #to test : 4.0
   sisnr: 0.
+
+autocast: false
+
+logging:
+  log_tensorboard: true
+  log_updates: 1 
+tensorboard:
+  with_media_logging: true
+  name: my_guitar_experiment
+
 
 # data hyperparameters
 dataset:
   batch_size: 16
   num_workers: 4
-  segment_duration: 5
+  segment_duration: 2
   train:
-    num_samples: 4096
+    num_samples: 500000
   valid:
     num_samples: 16
   evaluate:
@@ -38,13 +64,13 @@ dataset:
 
 # solver hyperparameters
 evaluate:
-  every: 5
+  every: 10
   num_workers: 5
   metrics:
     visqol: false
     sisnr: true
 generate:
-  every: 5
+  every: 10
   num_workers: 5
   audio:
     sample_rate: ${sample_rate}
@@ -56,11 +82,12 @@ checkpoint:
   keep_last: 10
   keep_every_states: null
 
+
 # optimization hyperparameters
 optim:
-  epochs: 500
+  epochs: 1000
   updates_per_epoch: 100
-  lr: 8e-5
+  lr: 1e-4
   max_norm: 0.
   optimizer: adam
   adam:

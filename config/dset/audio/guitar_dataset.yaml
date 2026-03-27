@@ -4,7 +4,8 @@ datasource:
   max_sample_rate: 44100
   max_channels: 1
 
-  train: egs/GuitarDataset
-  valid: egs/GuitarDataset
-  evaluate: egs/GuitarDataset
-  generate: egs/GuitarDataset
+  train: egs/guitar2
+  valid: egs/guitar
+  evaluate: egs/guitar
+  generate: egs/guitar
+
