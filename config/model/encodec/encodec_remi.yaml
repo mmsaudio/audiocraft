@@ -1,0 +1,23 @@
+# @package __global__
+defaults:
+  - encodec/default
+
+encodec:
+  causal: false
+  renormalize: false
+
+seanet:
+  dimension: 128
+  n_filters: 32
+  n_residual_layers: 1
+  ratios: [8, 5, 4, 2] #[8, 8, 4, 4]
+  kernel_size: 7
+  residual_kernel_size: 3
+  last_kernel_size: 7
+  lstm: 2
+
+rvq:
+  n_q: 8 #REMI
+  bins: 1024
+
+no_quant: {}

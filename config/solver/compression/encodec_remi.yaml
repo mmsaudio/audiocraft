@@ -1,0 +1,73 @@
+# @package __global__
+
+defaults:
+  - compression/default
+  - /model: encodec/encodec_remi
+  - override /dset: audio/guitar_dataset
+  - _self_
+
+sample_rate: 44100
+channels: 1
+
+# loss balancing
+losses:
+  adv: 4.
+  feat: 4.
+  l1: 0.1
+  mel: 0.
+  msspec: 2.
+  sisnr: 0.
+
+# data hyperparameters
+dataset:
+  batch_size: 16
+  num_workers: 4
+  segment_duration: 5
+  train:
+    num_samples: 4096
+  valid:
+    num_samples: 16
+  evaluate:
+    batch_size: 16
+    num_samples: 16
+  generate:
+    batch_size: 8
+    num_samples: 8
+    segment_duration: 10
+
+
+# solver hyperparameters
+evaluate:
+  every: 5
+  num_workers: 5
+  metrics:
+    visqol: false
+    sisnr: true
+generate:
+  every: 5
+  num_workers: 5
+  audio:
+    sample_rate: ${sample_rate}
+
+# checkpointing schedule
+checkpoint:
+  save_last: true
+  save_every: 25
+  keep_last: 10
+  keep_every_states: null
+
+# optimization hyperparameters
+optim:
+  epochs: 500
+  updates_per_epoch: 100
+  lr: 8e-5
+  max_norm: 0.
+  optimizer: adam
+  adam:
+    betas: [0.5, 0.9]
+    weight_decay: 0.
+  ema:
+    use: true         # whether to use EMA or not
+    updates: 1        # update at every step
+    device: ${device} # device for EMA, can be put on GPU if more frequent updates
+    decay: 0.99       # EMA decay value, if null, no EMA is used
