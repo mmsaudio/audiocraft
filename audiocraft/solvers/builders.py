@@ -46,6 +46,7 @@ def get_solver(cfg: omegaconf.DictConfig) -> StandardSolver:
     from .audiogen import AudioGenSolver
     from .compression import CompressionSolver
     from .musicgen import MusicGenSolver
+    from .guitargen import GuitarGenSolver
     from .diffusion import DiffusionSolver
     from .magnet import MagnetSolver, AudioMagnetSolver
     from .watermark import WatermarkSolver
@@ -53,6 +54,7 @@ def get_solver(cfg: omegaconf.DictConfig) -> StandardSolver:
     klass = {
         'compression': CompressionSolver,
         'musicgen': MusicGenSolver,
+        'guitargen': GuitarGenSolver,
         'audiogen': AudioGenSolver,
         'magnet': MagnetSolver,
         'audio_magnet': AudioMagnetSolver,
