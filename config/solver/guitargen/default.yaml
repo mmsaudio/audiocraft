@@ -4,8 +4,7 @@ defaults:
   - /solver/default
   - /conditioner: none
   - _self_
-  - /solver/musicgen/evaluation: none
-  - override /dset: audio/default
+  - override /dset: audio/guitar_dataset
 
 autocast: true
 autocast_dtype: float16
@@ -13,10 +12,54 @@ autocast_dtype: float16
 solver: guitargen
 sample_rate: 44100
 channels: 1
-compression_model_checkpoint: /home/vuillemr/audiocraft/exp/xps/ab400dbd/
+compression_model_checkpoint: /home/vuillemr/audiocraft/exp/xps/6c42ffdf/
+
+lm_model: transformer_lm
+
+codebooks_pattern:
+  modeling: parallel
+  # modeling: delay
+  # delay:
+  #   delays: [0, 1, 2, 3, 4, 5, 6, 7]
+  #   flatten_first: 0
+  #   empty_initial: 0
+  # unroll:
+  #   flattening: [0, 1, 2, 3, 4, 5, 6, 7]
+  #   delays: [0, 0, 0, 0, 0, 0, 0, 0]
+  # music_lm:
+  #   group_by: 2
+  # coarse_first:
+  #   delays: [0, 0, 0]
+
+
+transformer_lm:
+  n_q: 8
+  card: 1024
+  dim: 256         
+  num_heads: 8
+  hidden_scale: 4
+  num_layers: 8
+  norm: layer_norm
+  norm_first: true
+  causal: true
+  cross_attention: false
+  positional_embedding: sin
+  max_period: 10_000
+  bias_ff: false
+  bias_attn: false
+  bias_proj: False
+  layer_scale: None
+  weight_init: gaussian
+  depthwise_init: current
+  zero_bias_init: True
+  attention_as_float32: False
+  memory_efficient: True
+
 
 tokens:
   padding_with_special_token: false
+deadlock:
+  use: true  # deadlock detection
 
 interleave_stereo_codebooks:
   use: false
@@ -35,6 +78,8 @@ dataset:
   segment_duration: 30
   min_segment_ratio: 0.8  # lower values such as 0.5 result in generations with a lot of silence.
   return_info: true
+  sample_on_weight: false  # Uniform sampling all the way
+  sample_on_duration: false  # Uniform sampling all the way
   train:
     num_samples: 1000000 # need a randomly large number here for AudioDataset
   valid:
@@ -109,11 +154,12 @@ checkpoint:
   keep_last: 10
   keep_every_states: null
 
+
 optim:
   epochs: 200
   updates_per_epoch: 2000
-  lr: 1e-4
-  optimizer: adamw
+  lr: 1
+  optimizer: dadam
   max_norm: 1.0
   eager_sync: true
   adam:
@@ -122,4 +168,8 @@ optim:
     eps: 1e-8
 
 schedule:
-  lr_scheduler: null
+  lr_scheduler: cosine
+  cosine:
+    warmup: 4000
+    lr_min_ratio: 0.0
+    cycle_length: 1.0
